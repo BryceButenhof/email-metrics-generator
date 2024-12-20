@@ -47,6 +47,7 @@
                 min-width: 100%;
             }
             .submit {
+                width: 25rem;
                 display: block;
                 border-width: 1px;
                 border-radius: 0.5rem; /* 8px */
@@ -55,7 +56,7 @@
                 font-size: 1rem; /* 16px */
                 line-height: 1.5rem; /* 24px */
                 border-style: solid;
-                margin-top: 1rem;
+                margin-top: 2rem;
             }
             .form-container {
                 display: flex;
@@ -66,34 +67,36 @@
                 width: 30%;
             }
             .tableContainer {
-                margin: 2rem 0 2rem 0;
+                display: flex;
+                justify-content: center;
+                margin: 2rem 0 5rem 0;
 
                 table {
-                    border-collapse: separate;
-                    border-spacing: 0;
+                    border-collapse: collapse;
                     border-width: 1px;
-                    border-radius: 0.5rem; /* 8px */
                     background-color: rgb(55 65 81);
                     border-color: rgb(75 85 99);
                     border-style: solid;
                     color:white;
                     font-family: "Mulish";
                     line-height: 1.5rem; /* 24px */
-                    padding: .5rem;
-                    width: 100%;
+                    width: 80%;
 
                     th {
-                        background-color: rgb(75 85 99);
-                        border-spacing: 0;
+                        background-color: darkblue;
                     }
 
                     td {
                         text-align: center;
                     }
 
+                    tr:nth-child(even) {
+                        background-color: rgb(75 85 99);
+                    }
+
                     tr:last-child {
                         font-weight: bold;
-                        background-color: rgb(75 85 99);
+                        background-color: darkorange;
                         border-bottom-right-radius: 10px;
                     }
                 }
@@ -116,9 +119,10 @@
                     'Clicked',
                     'Clicked Rate',
                     'CTR',
-                    'Marked as Spam',
                     'Unsubscribes',
                     'Unsubscribe Rate',
+                    'Marked as Spam',
+                    'Spam Rate',
                     'Pull Range',
                     'Pulled By'
                 ]
@@ -147,22 +151,29 @@
                     form1.emailName.value,
                     form2.totalSent.value,
                     form2.totalDelivered.value,
-                    (form2.totalDelivered.value / form2.totalSent.value).toFixed(2),
+                    (form2.totalDelivered.value / form2.totalSent.value * 100).toFixed(2),
                     form1.hardBounced.value,
                     form1.softBounced.value,
                     form2.uniqueOpens.value,
                     form2.opens.value,
-                    (form2.uniqueOpens.value / form2.opens.value).toFixed(2),
+                    (form2.uniqueOpens.value / form2.totalDelivered.value * 100).toFixed(2),
                     form2.uniqueClicks.value,
                     form2.clicked.value,
-                    (form2.clicked.value / form2.totalDelivered.value).toFixed(2),
-                    (form2.uniqueClicks.value / form2.totalDelivered.value).toFixed(2),
-                    form2.markedAsSpam.value,
+                    (form2.clicked.value / form2.totalDelivered.value * 100).toFixed(2),
+                    (form2.uniqueClicks.value / form2.totalDelivered.value * 100).toFixed(2),
                     form2.unsubscribes.value,
-                    (form2.unsubscribes.value / form2.totalDelivered.value).toFixed(2),
+                    (form2.unsubscribes.value / form2.totalDelivered.value * 100).toFixed(2),
+                    form2.markedAsSpam.value,
+                    (form2.markedAsSpam.value / form2.totalDelivered.value * 100).toFixed(2),
                     form1.dateRange.value,
                     form1.pulledBy.value
                 ];
+            };
+
+            const removeEmptyLines = (element) => {
+                setTimeout(() => {
+                    element.value = element.value.replace(/^(\r\n)/,'');                  
+                }, 0);
             };
 
             const getCells = (data, type) => {
@@ -215,33 +226,38 @@
                     getAverageById(11),
                     getAverageById(12),
                     getTotalById(13),
-                    getTotalById(14),
-                    getAverageById(15),
+                    getAverageById(14),
+                    getTotalById(15),
+                    getAverageById(16),
                     '',
                     ''
                 ];
             }
 
-            const blah = () => {
+            const addRow = () => {
                 result.push(extractValues());
 
                 // Add new table
                 document.getElementById('tableContainer').innerHTML = createTable(result, getTotals());
                 
-                //clear forms
+                // Clear forms
                 document.forms[0].reset();
                 document.forms[1].reset();
+
+                // Scroll to bottom
+                window.scrollTo(0, document.body.scrollHeight);
             };
         </script>
     </head>
     <body>
-        <h1 class="title">Email Metrics Generator</h1>
+        <h1 class="title">CPI Email Metrics Generator</h1>
         <div class="form-container">
             <form class="form">
                 <label class="label">Email Name</label>
                 <input class="input" type="text" id="emailName" />
                 <label class="label">Delivery and Interaction Details</label>
-                <textarea class="input" rows="12" id="deliveryAndInteractionDetails" onChange="formatData()"></textarea>
+                <textarea class="input" rows="13" id="deliveryAndInteractionDetails" 
+                    onChange="formatData()" onPaste="removeEmptyLines(this)"></textarea>
                 <label class="label">Hard Bounced</label>
                 <input class="input" type="number" id="hardBounced" />
                 <label class="label">Soft Bounced</label>
@@ -250,26 +266,28 @@
                 <input class="input" type="text" id="dateRange" placeholder="mm/dd-mm/dd"/>
                 <label class="label">Pulled By (Initials)</label>
                 <input class="input" type="text" id="pulledBy" placeholder="KB"/>
-                <button class="submit" type="button" onClick="blah()">Add Row</button>
             </form>
             <form class="form">
                 <label class="label">Total Sent</label>
-                <input class="input" type="text" id="totalSent" />
+                <input class="input" type="number" id="totalSent" />
                 <label class="label">Total Delivered</label>
-                <input class="input" type="text" id="totalDelivered" />
+                <input class="input" type="number" id="totalDelivered" />
                 <label class="label">Unique Opens</label>
-                <input class="input" type="text" id="uniqueOpens" />
+                <input class="input" type="number" id="uniqueOpens" />
                 <label class="label">Opens</label>
-                <input class="input" type="text" id="opens" />
+                <input class="input" type="number" id="opens" />
                 <label class="label">Unique Clicks</label>
-                <input class="input" type="text" id="uniqueClicks" />
+                <input class="input" type="number" id="uniqueClicks" />
                 <label class="label">Clicked</label>
-                <input class="input" type="text" id="clicked" />
+                <input class="input" type="number" id="clicked" />
                 <label class="label">Marked as Spam</label>
-                <input class="input" type="text" id="markedAsSpam" />
+                <input class="input" type="number" id="markedAsSpam" />
                 <label class="label">Unsubscribes</label>
-                <input class="input" type="text" id="unsubscribes" />
+                <input class="input" type="number" id="unsubscribes" />
             </form>
+        </div>
+        <div class="form-container">
+            <button class="submit" type="button" onClick="addRow()">Add Row</button>
         </div>
         <div class="tableContainer" id="tableContainer"></div>
     </body>
