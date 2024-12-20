@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Mulish" rel="stylesheet"/>
+        <style>
+            html {
+                box-sizing: border-box;
+            }
+            *, *:before, *:after {
+                box-sizing: inherit;
+            }
+            body {
+                background-color: #242424;
+            }
+            .title {
+                margin: 0.5rem;
+                font-family: "Mulish";
+                font-size: 3rem;
+                line-height: 4.5rem;
+                font-weight: 500;
+                color: white;
+                text-align: center;
+            }
+            .label {
+                display: block;
+                margin: 0.5rem;
+                font-family: "Mulish";
+                font-size: 1rem; /* 16px */
+                line-height: 1.5rem; /* 24px */
+                font-weight: 500;
+                color: white;
+            }
+            .input {
+                display: block;
+                border-width: 1px;
+                border-radius: 0.5rem; /* 8px */
+                padding: 0.625rem; /* 10px */
+                font-family: "Mulish";
+                font-size: 1rem; /* 16px */
+                line-height: 1.5rem; /* 24px */
+                background-color: rgb(55 65 81);
+                border-color: rgb(75 85 99);
+                border-style: solid;
+                color: white;
+                width: 100%;
+                max-width: 100%;
+                min-width: 100%;
+            }
+            .submit {
+                display: block;
+                border-width: 1px;
+                border-radius: 0.5rem; /* 8px */
+                padding: 0.625rem; /* 10px */
+                font-family: "Mulish";
+                font-size: 1rem; /* 16px */
+                line-height: 1.5rem; /* 24px */
+                border-style: solid;
+                margin-top: 1rem;
+            }
+            .form-container {
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+            }
+            .form {
+                width: 30%;
+            }
+        </style>
+        <script>
+            window.onload = () => {
+                console.log({forms: document.forms[0].elements});
+            };
+
+            const regex = /\d+/g;
+
+            const formatData = () => {
+                const form1 = document.forms[0].elements;
+                const form2 = document.forms[1].elements;
+                const text = form1.deliveryAndInteractionDetails.value.split('\n');
+
+                form2.totalSent.value = text[1].match(regex);
+                form2.totalDelivered.value = text[2].match(regex);
+                form2.uniqueOpens.value = text[6].match(regex);
+                form2.opens.value = text[7].match(regex);
+                form2.uniqueClicks.value = text[8].match(regex);
+                form2.clicked.value = text[9].match(regex);
+                form2.markedAsSpam.value = text[10].match(regex);
+                form2.unsubscribes.value = text[11].match(regex);
+            }
+            
+        </script>
+    </head>
+    <body>
+        <h1 class="title">Email Metrics Generator</h1>
+        <div class="form-container">
+            <form class="form">
+                <label class="label">Email Name</label>
+                <input class="input" type="text" id="emailName" />
+                <label class="label">Delivery and Interaction Details</label>
+                <textarea class="input" rows="12" id="deliveryAndInteractionDetails"></textarea>
+                <label class="label">Hard Bounced</label>
+                <input class="input" type="text" id="hardBounced" />
+                <label class="label">Soft Bounced</label>
+                <input class="input" type="text" id="softBounced" />
+                <label class="label">Date Range</label>
+                <input class="input" type="text" id="dateRange" />
+                <label class="label">Pulled By (Initials)</label>
+                <input class="input" type="text" id="pulledBy" />
+                <button class="submit" type="button" onClick="formatData()">Submit</button>
+            </form>
+            <form class="form">
+                <!--
+                <label class="label">Email Name</label>
+                <input class="input" type="text" id="emailName" />
+                -->
+                <label class="label">Total Sent</label>
+                <input class="input" type="text" id="totalSent" />
+                <label class="label">Total Delivered</label>
+                <input class="input" type="text" id="totalDelivered" />
+                <!--
+                <label class="label">Hard Bounced</label>
+                <input class="input" type="text" id="hardBounced" />
+                <label class="label">Soft Bounced</label>
+                <input class="input" type="text" id="softBounced" />
+                -->
+                <label class="label">Unique Opens</label>
+                <input class="input" type="text" id="uniqueOpens" />
+                <label class="label">Opens</label>
+                <input class="input" type="text" id="opens" />
+                <label class="label">Unique Clicks</label>
+                <input class="input" type="text" id="uniqueClicks" />
+                <label class="label">Clicked</label>
+                <input class="input" type="text" id="clicked" />
+                <label class="label">Marked as Spam</label>
+                <input class="input" type="text" id="markedAsSpam" />
+                <label class="label">Unsubscribes</label>
+                <input class="input" type="text" id="unsubscribes" />
+                <!--
+                <label class="label">Date Range</label>
+                <input class="input" type="text" id="dateRange" />
+                <label class="label">Pulled By</label>
+                <input class="input" type="text" id="pulledBy" />
+                -->
+            </form>
+        </div>
+    </body>
+</html>
