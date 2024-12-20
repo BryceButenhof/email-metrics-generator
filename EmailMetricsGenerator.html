@@ -65,29 +65,173 @@
             .form {
                 width: 30%;
             }
+            .tableContainer {
+                margin: 2rem 0 2rem 0;
+
+                table {
+                    border-collapse: separate;
+                    border-spacing: 0;
+                    border-width: 1px;
+                    border-radius: 0.5rem; /* 8px */
+                    background-color: rgb(55 65 81);
+                    border-color: rgb(75 85 99);
+                    border-style: solid;
+                    color:white;
+                    font-family: "Mulish";
+                    line-height: 1.5rem; /* 24px */
+                    padding: .5rem;
+                    width: 100%;
+
+                    th {
+                        background-color: rgb(75 85 99);
+                        border-spacing: 0;
+                    }
+
+                    td {
+                        text-align: center;
+                    }
+
+                    tr:last-child {
+                        font-weight: bold;
+                        background-color: rgb(75 85 99);
+                        border-bottom-right-radius: 10px;
+                    }
+                }
+            }
         </style>
         <script>
-            window.onload = () => {
-                console.log({forms: document.forms[0].elements});
-            };
-
             const regex = /\d+/g;
+            const result = [
+                [
+                    'Email Name',
+                    'Total Sent',
+                    'Total Delivered',
+                    '% Delivered',
+                    'Hard Bounced',
+                    'Soft Bounced',
+                    'Unique Opens',
+                    'Opens',
+                    '% Opened',
+                    'Unique Clicks',
+                    'Clicked',
+                    'Clicked Rate',
+                    'CTR',
+                    'Marked as Spam',
+                    'Unsubscribes',
+                    'Unsubscribe Rate',
+                    'Pull Range',
+                    'Pulled By'
+                ]
+            ];
 
             const formatData = () => {
                 const form1 = document.forms[0].elements;
                 const form2 = document.forms[1].elements;
-                const text = form1.deliveryAndInteractionDetails.value.split('\n');
+                const textArea = form1.deliveryAndInteractionDetails.value.split('\n');
 
-                form2.totalSent.value = text[1].match(regex);
-                form2.totalDelivered.value = text[2].match(regex);
-                form2.uniqueOpens.value = text[6].match(regex);
-                form2.opens.value = text[7].match(regex);
-                form2.uniqueClicks.value = text[8].match(regex);
-                form2.clicked.value = text[9].match(regex);
-                form2.markedAsSpam.value = text[10].match(regex);
-                form2.unsubscribes.value = text[11].match(regex);
+                form2.totalSent.value = textArea[1].match(regex);
+                form2.totalDelivered.value = textArea[2].match(regex);
+                form2.uniqueOpens.value = textArea[6].match(regex);
+                form2.opens.value = textArea[7].match(regex);
+                form2.uniqueClicks.value = textArea[8].match(regex);
+                form2.clicked.value = textArea[9].match(regex);
+                form2.markedAsSpam.value = textArea[10].match(regex);
+                form2.unsubscribes.value = textArea[11].match(regex);
             }
-            
+
+            const extractValues = () => {
+                const form1 = document.forms[0].elements;
+                const form2 = document.forms[1].elements;
+
+                return [
+                    form1.emailName.value,
+                    form2.totalSent.value,
+                    form2.totalDelivered.value,
+                    (form2.totalDelivered.value / form2.totalSent.value).toFixed(2),
+                    form1.hardBounced.value,
+                    form1.softBounced.value,
+                    form2.uniqueOpens.value,
+                    form2.opens.value,
+                    (form2.uniqueOpens.value / form2.opens.value).toFixed(2),
+                    form2.uniqueClicks.value,
+                    form2.clicked.value,
+                    (form2.clicked.value / form2.totalDelivered.value).toFixed(2),
+                    (form2.uniqueClicks.value / form2.totalDelivered.value).toFixed(2),
+                    form2.markedAsSpam.value,
+                    form2.unsubscribes.value,
+                    (form2.unsubscribes.value / form2.totalDelivered.value).toFixed(2),
+                    form1.dateRange.value,
+                    form1.pulledBy.value
+                ];
+            };
+
+            const getCells = (data, type) => {
+                return data.map(cell => `<${type}>${cell}</${type}>`).join('');
+            };
+
+            const createBody = (data) => {
+                return data.map(row => `<tr>${getCells(row, 'td')}</tr>`).join('');
+            };
+
+            const createTable = (data, totals) => {
+                const [headings, ...rows] = data;
+
+                return `
+                    <table>
+                        <thead>${getCells(headings, 'th')}</thead>
+                        <tbody>${createBody([...rows, totals])}</tbody>
+                    </table>
+                `;
+            };
+
+            const getTotalById = valueId => {
+                let total = 0;
+                result.forEach((row, id) => {
+                    if (id !== 0) {
+                        total += Number(row[valueId]);
+                    }
+                });
+                
+                return total;
+            };
+
+            const getAverageById = id => {
+                return (getTotalById(id) / (result.length - 1)).toFixed(2);
+            };
+
+            const getTotals = () => {
+                return [
+                    'Totals',
+                    getTotalById(1),
+                    getTotalById(2),
+                    getAverageById(3),
+                    getTotalById(4),
+                    getTotalById(5),
+                    getTotalById(6),
+                    getTotalById(7),
+                    getAverageById(8),
+                    getTotalById(9),
+                    getTotalById(10),
+                    getAverageById(11),
+                    getAverageById(12),
+                    getTotalById(13),
+                    getTotalById(14),
+                    getAverageById(15),
+                    '',
+                    ''
+                ];
+            }
+
+            const blah = () => {
+                result.push(extractValues());
+
+                // Add new table
+                document.getElementById('tableContainer').innerHTML = createTable(result, getTotals());
+                
+                //clear forms
+                document.forms[0].reset();
+                document.forms[1].reset();
+            };
         </script>
     </head>
     <body>
@@ -97,32 +241,22 @@
                 <label class="label">Email Name</label>
                 <input class="input" type="text" id="emailName" />
                 <label class="label">Delivery and Interaction Details</label>
-                <textarea class="input" rows="12" id="deliveryAndInteractionDetails"></textarea>
+                <textarea class="input" rows="12" id="deliveryAndInteractionDetails" onChange="formatData()"></textarea>
                 <label class="label">Hard Bounced</label>
-                <input class="input" type="text" id="hardBounced" />
+                <input class="input" type="number" id="hardBounced" />
                 <label class="label">Soft Bounced</label>
-                <input class="input" type="text" id="softBounced" />
+                <input class="input" type="number" id="softBounced" />
                 <label class="label">Date Range</label>
-                <input class="input" type="text" id="dateRange" />
+                <input class="input" type="text" id="dateRange" placeholder="mm/dd-mm/dd"/>
                 <label class="label">Pulled By (Initials)</label>
-                <input class="input" type="text" id="pulledBy" />
-                <button class="submit" type="button" onClick="formatData()">Submit</button>
+                <input class="input" type="text" id="pulledBy" placeholder="KB"/>
+                <button class="submit" type="button" onClick="blah()">Add Row</button>
             </form>
             <form class="form">
-                <!--
-                <label class="label">Email Name</label>
-                <input class="input" type="text" id="emailName" />
-                -->
                 <label class="label">Total Sent</label>
                 <input class="input" type="text" id="totalSent" />
                 <label class="label">Total Delivered</label>
                 <input class="input" type="text" id="totalDelivered" />
-                <!--
-                <label class="label">Hard Bounced</label>
-                <input class="input" type="text" id="hardBounced" />
-                <label class="label">Soft Bounced</label>
-                <input class="input" type="text" id="softBounced" />
-                -->
                 <label class="label">Unique Opens</label>
                 <input class="input" type="text" id="uniqueOpens" />
                 <label class="label">Opens</label>
@@ -135,13 +269,8 @@
                 <input class="input" type="text" id="markedAsSpam" />
                 <label class="label">Unsubscribes</label>
                 <input class="input" type="text" id="unsubscribes" />
-                <!--
-                <label class="label">Date Range</label>
-                <input class="input" type="text" id="dateRange" />
-                <label class="label">Pulled By</label>
-                <input class="input" type="text" id="pulledBy" />
-                -->
             </form>
         </div>
+        <div class="tableContainer" id="tableContainer"></div>
     </body>
 </html>
