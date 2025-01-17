@@ -158,6 +158,12 @@
                 const form1 = document.forms[0].elements;
                 const form2 = document.forms[1].elements;
 
+                console.log({
+                    hardBounced: form1.hardBounced,
+                    softBounced: form1.softBounced,
+                    totalSent: form2.totalSent
+                });
+
                 return [
                     form1.emailName.value,
                     form2.totalSent.value,
@@ -166,7 +172,7 @@
                     form1.hardBounced.value,
                     `${(form1.hardBounced.value / form2.totalSent.value * 100).toFixed(2)}%`,
                     form1.softBounced.value,
-                    `${((form1.hardBounced.value + form1.softBounced.value) / form2.totalSent.value * 100).toFixed(2)}%`,
+                    `${((Number(form1.hardBounced.value) + Number(form1.softBounced.value)) / form2.totalSent.value * 100).toFixed(2)}%`,
                     form2.uniqueOpens.value,
                     form2.opens.value,
                     `${(form2.uniqueOpens.value / form2.totalDelivered.value * 100).toFixed(2)}%`,
@@ -212,7 +218,7 @@
                 let total = 0;
                 result.forEach((row, id) => {
                     if (id !== 0) {
-                        total += Number(row[valueId]);
+                        total += Number(row[valueId].replace('%', ''));
                     }
                 });
                 
@@ -220,7 +226,7 @@
             };
 
             const getAverageById = id => {
-                return (getTotalById(id) / (result.length - 1)).toFixed(2);
+                return `${(getTotalById(id) / (result.length - 1)).toFixed(2)}%`;
             };
 
             const getTotals = () => {
@@ -228,22 +234,22 @@
                     'Totals',
                     getTotalById(1),
                     getTotalById(2),
-                    `${getAverageById(3)}%`,
+                    getAverageById(3),
                     getTotalById(4),
-                    `${getAverageById(5)}%`,
+                    getAverageById(5),
                     getTotalById(6),
-                    `${getAverageById(7)}%`,
+                    getAverageById(7),
                     getTotalById(8),
                     getTotalById(9),
-                    `${getAverageById(10)}%`,
+                    getAverageById(10),
                     getTotalById(11),
                     getTotalById(12),
-                    `${getAverageById(13)}%`,
-                    `${getAverageById(14)}%`,
+                    getAverageById(13),
+                    getAverageById(14),
                     getTotalById(15),
-                    `${getAverageById(16)}%`,
+                    getAverageById(16),
                     getTotalById(17),
-                    `${getAverageById(18)}%`,
+                    getAverageById(18),
                     '',
                     ''
                 ];
