@@ -69,25 +69,34 @@
             .tableContainer {
                 display: flex;
                 justify-content: center;
-                margin: 2rem 0 5rem 0;
+                margin: 2rem 5rem 5rem 5rem;
 
                 table {
                     border-collapse: collapse;
                     border-width: 1px;
                     background-color: rgb(55 65 81);
-                    border-color: rgb(75 85 99);
+                    border-color: rgb(107 114 128);
                     border-style: solid;
                     color:white;
                     font-family: "Mulish";
-                    line-height: 1.5rem; /* 24px */
-                    width: 80%;
+                    line-height: 1.5rem;
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
 
                     th {
-                        background-color: darkblue;
+                        background-color: rgb(40, 59, 135);
                     }
 
                     td {
                         text-align: center;
+                        min-width: 10rem;
+                    }
+
+                    td:not(:first-child), th:not(:first-child) {
+                        border-left-color: rgb(107 114 128);
+                        border-left-width: 1px;
+                        border-left-style: solid;
                     }
 
                     tr:nth-child(even) {
@@ -96,7 +105,7 @@
 
                     tr:last-child {
                         font-weight: bold;
-                        background-color: darkorange;
+                        background-color: rgb(41, 171, 227);
                         border-bottom-right-radius: 10px;
                     }
                 }
@@ -106,25 +115,27 @@
             const regex = /\d+/g;
             const result = [
                 [
-                    'Email Name',
-                    'Total Sent',
-                    'Total Delivered',
-                    '% Delivered',
-                    'Hard Bounced',
-                    'Soft Bounced',
-                    'Unique Opens',
-                    'Opens',
-                    '% Opened',
-                    'Unique Clicks',
-                    'Clicked',
-                    'Clicked Rate',
-                    'CTR',
-                    'Unsubscribes',
-                    'Unsubscribe Rate',
-                    'Marked as Spam',
-                    'Spam Rate',
-                    'Pull Range',
-                    'Pulled By'
+                    'Email Name', // 0 
+                    'Total Sent', // 1
+                    'Total Delivered', // 2
+                    '% Delivered', // 3
+                    'Hard Bounced', // 4
+                    '% Hard Bounced', // 5
+                    'Soft Bounced', // 6
+                    '% Bounced', // 7
+                    'Unique Opens', // 8
+                    'Opens', // 9
+                    '% Opened', // 10
+                    'Unique Clicks', // 11
+                    'Clicked', // 12
+                    'Clicked Rate', // 13
+                    'CTR', // 14
+                    'Marked as Spam', // 15
+                    'Spam Rate', //16
+                    'Unsubscribes', // 17
+                    'Unsubscribe Rate', // 18
+                    'Pull Range', // 19
+                    'Pulled By' // 20
                 ]
             ];
 
@@ -151,20 +162,22 @@
                     form1.emailName.value,
                     form2.totalSent.value,
                     form2.totalDelivered.value,
-                    (form2.totalDelivered.value / form2.totalSent.value * 100).toFixed(2),
+                    `${(form2.totalDelivered.value / form2.totalSent.value * 100).toFixed(2)}%`,
                     form1.hardBounced.value,
+                    `${(form1.hardBounced.value / form2.totalSent.value * 100).toFixed(2)}%`,
                     form1.softBounced.value,
+                    `${((form1.hardBounced.value + form1.softBounced.value) / form2.totalSent.value * 100).toFixed(2)}%`,
                     form2.uniqueOpens.value,
                     form2.opens.value,
-                    (form2.uniqueOpens.value / form2.totalDelivered.value * 100).toFixed(2),
+                    `${(form2.uniqueOpens.value / form2.totalDelivered.value * 100).toFixed(2)}%`,
                     form2.uniqueClicks.value,
                     form2.clicked.value,
-                    (form2.clicked.value / form2.totalDelivered.value * 100).toFixed(2),
-                    (form2.uniqueClicks.value / form2.totalDelivered.value * 100).toFixed(2),
-                    form2.unsubscribes.value,
-                    (form2.unsubscribes.value / form2.totalDelivered.value * 100).toFixed(2),
+                    `${(form2.clicked.value / form2.totalDelivered.value * 100).toFixed(2)}%`,
+                    `${(form2.uniqueClicks.value / form2.totalDelivered.value * 100).toFixed(2)}%`,
                     form2.markedAsSpam.value,
-                    (form2.markedAsSpam.value / form2.totalDelivered.value * 100).toFixed(2),
+                    `${(form2.markedAsSpam.value / form2.totalDelivered.value * 100).toFixed(2)}%`,
+                    form2.unsubscribes.value,
+                    `${(form2.unsubscribes.value / form2.totalDelivered.value * 100).toFixed(2)}%`,
                     form1.dateRange.value,
                     form1.pulledBy.value
                 ];
@@ -173,7 +186,7 @@
             const removeEmptyLines = (element) => {
                 setTimeout(() => {
                     element.value = element.value.replace(/^(\r\n)/,'');                  
-                }, 0);
+                }, 10);
             };
 
             const getCells = (data, type) => {
@@ -215,20 +228,22 @@
                     'Totals',
                     getTotalById(1),
                     getTotalById(2),
-                    getAverageById(3),
+                    `${getAverageById(3)}%`,
                     getTotalById(4),
-                    getTotalById(5),
+                    `${getAverageById(5)}%`,
                     getTotalById(6),
-                    getTotalById(7),
-                    getAverageById(8),
+                    `${getAverageById(7)}%`,
+                    getTotalById(8),
                     getTotalById(9),
-                    getTotalById(10),
-                    getAverageById(11),
-                    getAverageById(12),
-                    getTotalById(13),
-                    getAverageById(14),
+                    `${getAverageById(10)}%`,
+                    getTotalById(11),
+                    getTotalById(12),
+                    `${getAverageById(13)}%`,
+                    `${getAverageById(14)}%`,
                     getTotalById(15),
-                    getAverageById(16),
+                    `${getAverageById(16)}%`,
+                    getTotalById(17),
+                    `${getAverageById(18)}%`,
                     '',
                     ''
                 ];
